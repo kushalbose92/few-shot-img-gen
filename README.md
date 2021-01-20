@@ -1,4 +1,4 @@
-## A Neighborhood-guided Few-Shot Generative Network
+## A Simple Neighborhood-guided Few-Shot Generative Network
 
 The project contains 6 .py files
 
