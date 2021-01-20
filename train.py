@@ -38,7 +38,7 @@ class ModelTrainer():
     # training of model
     def train(self):
 
-        # Definition of meta model 
+        # Definition of meta model
         img_gen = ImageGenerator(self.latent_dims, self.ways, self.shots)
         img_gen.to(self.device)
         img_gen_meta = l2l.algorithms.MAML(img_gen, lr = self.base_lr, first_order = True)
@@ -46,7 +46,7 @@ class ModelTrainer():
 
         print("Status: Training Stage \n")
 
-        # Outer loop 
+        # Outer loop
         for i in range(self.meta_train_epochs):
 
             meta_loss = 0.0
@@ -71,24 +71,24 @@ class ModelTrainer():
                 # Inner loop
                 for step in range(self.steps_per_task):
 
-                    # Support set as input to model 
+                    # Support set as input to model
                     support_recon, latent_proto, latent_radius, latent_feat = img_gen_learner(support_set, gamma = 1.0)
 
                     # Loss definitions
                     recon_loss = UtilFunctions().loss_reconstruction(support_set, support_recon)
                     radius_loss_inter = UtilFunctions().radius_loss_interclass(latent_proto, latent_radius) * self.beta
                     radius_loss_intra = UtilFunctions().radius_loss_intraclass(latent_proto, latent_radius, self.shots, self.ways) * self.alpha
-                
+
 
                     train_loss = recon_loss + radius_loss_inter + radius_loss_intra
                     train_loss /= len(adaptation_indices)
 
-                    # Fast adaptation step in base model 
+                    # Fast adaptation step in base model
                     img_gen_learner.adapt(train_loss)
 
-                # Query set as input to model 
+                # Query set as input to model
                 query_recon, latent_proto, latent_radius, latent_feat = img_gen_learner(query_set, gamma = 1.0)
-               
+
                 recon_loss = UtilFunctions().loss_reconstruction(query_set, query_recon)
                 radius_loss_inter = UtilFunctions().radius_loss_interclass(latent_proto, latent_radius) * self.beta
                 radius_loss_intra = UtilFunctions().radius_loss_intraclass(latent_proto, latent_radius, self.shots, self.ways) * self.alpha
@@ -96,7 +96,7 @@ class ModelTrainer():
                 query_loss = recon_loss + radius_loss_inter + radius_loss_intra
                 query_loss /= len(query_set)
 
-                # Backpropagation of the meta model 
+                # Backpropagation of the meta model
                 query_loss.backward()
                 meta_loss += query_loss.item()
 
@@ -109,8 +109,8 @@ class ModelTrainer():
                 print(i + 1, " Meta Train Loss: ", meta_loss)
 
 
-        # Model path and model saving step 
-        MODEL_PATH = os.getcwd() + '/img_gen.pt'
+        # Model path and model saving step
+        MODEL_PATH = os.getcwd() + '/saved_model.pt'
         torch.save(img_gen.state_dict(), MODEL_PATH)
 
         return MODEL_PATH
