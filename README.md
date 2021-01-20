@@ -27,6 +27,7 @@ The project contains 6 .py files
   * __device__ = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") (Device to be used to run the code)
 
 The 'requirements.txt' file should list all Python libraries that your notebooks depend on, and they will be installed using:
+
 '''
  pip install -r requirements.txt
 '''
