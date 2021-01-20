@@ -18,6 +18,7 @@ import learn2learn as l2l
 from model import ImageGenerator
 
 
+# Data loader for MNIST dataset
 class MNISTLoader():
 	def __init__(self, nways, shots, query, num_train_tasks, num_test_tasks):
 		print("Dataset:  MNIST\n")
@@ -74,6 +75,7 @@ class MNISTLoader():
 
 		return test_tasks
 
+# Data loader for fashion-MNIST dataset
 class Fashion_MNISTLoader():
 	def __init__(self, nways, shots, query, num_train_tasks, num_test_tasks):
 		print("Dataset:  Fashion MNIST\n")
@@ -85,8 +87,7 @@ class Fashion_MNISTLoader():
 
 		total_classes = 10
 		class_set = [i for i in range(total_classes)]
-		self.train_classes = [0, 1, 2, 3, 4, 5, 6, 7, 9]
-		# self.train_classes = random.sample(class_set, total_classes - self.nways)
+		self.train_classes = random.sample(class_set, total_classes - self.nways)
 		self.test_classes = list(set(class_set).difference(self.train_classes))
 
 		# self.transforms = transforms.Compose([transforms.ToTensor(), transforms.Normalize((0.5,), (0.5,))])
@@ -130,7 +131,7 @@ class Fashion_MNISTLoader():
 
 		return test_tasks
 
-
+# Data loader for Omniglot dataset
 class OmniglotLoader():
 	def __init__(self, nways, shots, query, num_train_tasks, num_test_tasks):
 		print("Dataset:  Omniglot\n")
@@ -186,56 +187,3 @@ class OmniglotLoader():
 		return test_tasks
 
 
-class CIFAR10Loader():
-	def __init__(self, nways, shots, query, num_train_tasks, num_test_tasks):
-		print("Dataset:  CIFAR10\n")
-		self.nways = nways
-		self.shots = shots
-		self.query = query
-		self.num_train_tasks = num_train_tasks
-		self.num_test_tasks = num_test_tasks
-
-		total_classes = 10
-		class_set = [i for i in range(total_classes)]
-		self.train_classes = random.sample(class_set, total_classes - self.nways)
-		self.test_classes = list(set(class_set).difference(self.train_classes))
-
-		self.transforms = transforms.Compose([transforms.ToTensor()])
-
-
-	def train_task_set(self):
-		cifar_train = l2l.data.MetaDataset(torchvision.datasets.CIFAR10(root='./data',
-                                         train=True,
-                                         download=True,
-                                         transform=self.transforms))
-
-		train_tasks = l2l.data.TaskDataset(cifar_train,
-                                   task_transforms=[
-                                        l2l.data.transforms.FusedNWaysKShots(cifar_train, n = self.nways, k = (self.shots + self.query),
-                                        									replacement = False, filter_labels = self.train_classes),
-                                        l2l.data.transforms.LoadData(cifar_train),
-                                        l2l.data.transforms.RemapLabels(cifar_train),
-                                        l2l.data.transforms.ConsecutiveLabels(cifar_train),
-                                   ],
-                                   num_tasks = self.num_train_tasks)
-
-		return train_tasks
-
-
-	def test_task_set(self):
-		cifar_test = l2l.data.MetaDataset(torchvision.datasets.CIFAR10(root='./data',
-                                         train=False,
-                                         download=True,
-                                         transform=self.transforms))
-
-		test_tasks = l2l.data.TaskDataset(cifar_test,
-                                   task_transforms=[
-                                        l2l.data.transforms.FusedNWaysKShots(cifar_test, n = 1, k = (self.shots + self.query),
-                                        									replacement = False, filter_labels = self.test_classes),
-                                        l2l.data.transforms.LoadData(cifar_test),
-                                        l2l.data.transforms.RemapLabels(cifar_test),
-                                        l2l.data.transforms.ConsecutiveLabels(cifar_test),
-                                   ],
-                                   num_tasks = self.num_test_tasks)
-
-		return test_tasks
