@@ -60,11 +60,11 @@ class ImageGenerator(nn.Module):
                 class_avg += x_latent[i*self.shot + j]
             class_avg /= self.shot
             x_proto[i] = class_avg
-            
+
         return x_proto
 
 
-    # Neighborhood radius generation  
+    # Neighborhood radius generation
     def radius_generation(self, x_latent):
 
         num_points = x_latent.size(0)
@@ -99,7 +99,7 @@ class ImageGenerator(nn.Module):
 
         return x_proto, x_latent
 
-    # Decoding of the encoded image set 
+    # Decoding of the encoded image set
     def decoder(self, input):
         x_embed = self.fc(input)
         x = x_embed.view(-1, 128, 7, 7)
@@ -108,7 +108,7 @@ class ImageGenerator(nn.Module):
         x2 = torch.sigmoid(x2)
         return x2
 
-    # Forward propagation of the model 
+    # Forward propagation of the model
     def forward(self, input, gamma):
         x_proto, x_latent = self.encoder(input)
 
@@ -119,7 +119,7 @@ class ImageGenerator(nn.Module):
 
         repeated_radius = torch.zeros(self.ways*self.shot, self.latent_dims).to(device)
         for k in range(self.ways * self.shot):
-            repeated_radius[k] = x_radius[int(k / self.shot)] 
+            repeated_radius[k] = x_radius[int(k / self.shot)]
 
         x_recon = torch.add(x_latent, repeated_radius * gamma)
         recon_images = self.decoder(x_recon)
