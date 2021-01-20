@@ -39,7 +39,7 @@ class ModelEvaluation():
         img_gen = ImageGenerator(self.latent_dims, self.ways, self.shots)
 
         # Loading the saved model from the directory
-        img_gen.load_state_dict(torch.load(MODEL_PATH))
+        img_gen.load_state_dict(torch.load(MODEL_PATH, map_location = self.device))
         img_gen.to(self.device)
         img_gen_meta = l2l.algorithms.MAML(img_gen, lr = self.base_lr, first_order = True)
 
