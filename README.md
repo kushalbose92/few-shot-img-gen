@@ -22,5 +22,7 @@ The project contains 6 .py files
   * __latent_dims__ = 2 (Dimension of latent space)
   * __num_train_tasks__ = 50000 (Number of training tasks)
   * __num_test_tasks__ = 500 (Number of test tasks)
+  * __dataset__ = "fashion-mnist (Name of the dataset)
+  * __use_saved_model__ = False (Whether to use saved model or not)
   * __device__ = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") (Device to be used to run the code)
 
