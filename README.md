@@ -31,3 +31,9 @@ The `requirements.txt` file should list all Python libraries which are used to c
 ```
 pip install -r requirements.txt
 ```
+Multiple trained models are provided in the folder named saved_models. The name of the saved model can be used in the file named main.py.
+## For instance demo run the file:
+
+```
+python main.py
+```
